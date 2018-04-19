@@ -107,157 +107,322 @@ public class RenderHPEvent {
             Configuration.hudWidget horseArmorBarBackground = widgets.get("HorseArmorBarBackground");
 
             if (Configuration.useCustomPosition) {
+                boolean verticle = healthBar.verticle;
+                /*
+                * 
+                *  GET HEALTHBAR BACKGROUND RESOURCE IF EXISTS 
+                * 
+                * */
                 if (WidgetImages.keySet().contains("HealthBarBackground")) {
                     mc.getTextureManager().bindTexture(WidgetImages.get("HealthBarBackground"));
                 } else {
-                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
+                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar : uiHealthBar);
                 }
-                boolean verticle = healthBar.verticle;
                 
+                /*
+                * 
+                *  DRAW BACKGROUND WITH HIGHLIGHT IF NECESSARY
+                * 
+                * */
                 if (highlight && Configuration.highlightOnDamage) {
-                    drawTexturedModalRect(healthBarBackground.uiPosX, healthBarBackground.uiPosY, healthBarBackground.subElements.get("Highlight")[0], healthBarBackground.subElements.get("Highlight")[1], healthBar.textureSizeX, healthBar.textureSizeY);
+                    drawBar(healthBarBackground, 1, "Highlight");
                 } else {
-                    drawTexturedModalRect(healthBarBackground.uiPosX, healthBarBackground.uiPosY, healthBarBackground.texturePosX, healthBarBackground.texturePosY, healthBar.textureSizeX, healthBar.textureSizeY);
+                    drawBar(healthBarBackground, 1);
                 }
+
+
+                /*
+                * 
+                *  GET HEALTHBAR RESOURCE IF EXISTS 
+                * 
+                * */
 
                 if (WidgetImages.keySet().contains("HealthBar")) {
                     mc.getTextureManager().bindTexture(WidgetImages.get("HealthBar"));
                 } else {
-                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
+                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar : uiHealthBar);
                 }
 
-                if (Configuration.showPreviousHealth)
-                    drawTexturedModalRect(healthBar.uiPosX, healthBar.uiPosY, healthBar.subElements.get("PastHealth")[0], healthBar.subElements.get("PastHealth")[1],
-                            verticle ? healthBar.texturePosX : Math.min(Math.round(healthLast2 / healthMax * healthBar.textureSizeX), healthBar.texturePosX),
-                            verticle ? Math.min(Math.round(healthLast2 / healthMax * healthBar.texturePosY), healthBar.texturePosY): healthBar.texturePosY);
+                /*
+                * 
+                *  PREVIOUS HEALTH 
+                * 
+                * */
+                if (Configuration.showPreviousHealth) {
+                    drawBar(healthBar, Math.round(healthLast2 / healthMax), "PastHealth");
+                }
 
+                /*
+                * 
+                *  WITHER POTION HEALTH 
+                * 
+                * */
                 if (mc.thePlayer.isPotionActive(Potion.wither)) {
-                    drawTexturedModalRect(healthBar.uiPosX, healthBar.uiPosY, healthBar.subElements.get("WitherHealth")[0], healthBar.subElements.get("WitherHealth")[1],
-                            verticle ? healthBar.texturePosX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                            verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);
+                    drawBar(healthBar, currentValue, "WitherHealth");
+
+                /*
+                * 
+                *  POISON HEALTH 
+                * 
+                * */
                 } else if (mc.thePlayer.isPotionActive(Potion.poison)) {
-                    drawTexturedModalRect(healthBar.uiPosX, healthBar.uiPosY, healthBar.subElements.get("PoisonHealth")[0], healthBar.subElements.get("PoisonHealth")[1],
-                            verticle ? healthBar.texturePosX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                            verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);
+                    drawBar(healthBar, currentValue, "PoisonHealth");
+
+                /*
+                * 
+                *  REGENERATION HEALTH 
+                * 
+                * */
                 } else if (mc.thePlayer.isPotionActive(Potion.regeneration)) {
-                    drawTexturedModalRect(healthBar.uiPosX, healthBar.uiPosY, healthBar.subElements.get("RegenHealth")[0], healthBar.subElements.get("RegenHealth")[1],
-                            verticle ? healthBar.texturePosX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                            verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);
+                    drawBar(healthBar, currentValue, "RegenHealth");
+
+                /*
+                * 
+                *  NORMAL HEALTH 
+                * 
+                * */
                 } else {
                     if (health / healthMax > .75f) {
-                        drawTexturedModalRect(healthBar.uiPosX, verticle ? ((healthBar.uiPosY + healthBar.textureSizeY) - (Math.round(currentValue * healthBar.textureSizeY))) : healthBar.uiPosY, healthBar.texturePosX, verticle ? ((healthBar.texturePosY + healthBar.textureSizeY) - (Math.round(currentValue * healthBar.textureSizeY))) : healthBar.texturePosY,
-                                verticle ? healthBar.textureSizeX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                                verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);
+                        drawBar(healthBar, currentValue);
                     } else if (health / healthMax > .25f) {
-                        drawTexturedModalRect(healthBar.uiPosX, verticle ? ((healthBar.uiPosY + healthBar.textureSizeY) - (Math.round(currentValue * healthBar.textureSizeY))) : healthBar.uiPosY, healthBar.texturePosX, verticle ? ((healthBar.texturePosY + healthBar.textureSizeY) - (Math.round(currentValue * healthBar.textureSizeY))) : healthBar.texturePosY,
-                                verticle ? healthBar.textureSizeX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                                verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);
-                        /*drawTexturedModalRect(healthBar.uiPosX, healthBar.uiPosY, healthBar.subElements.get("MidHealth")[0], healthBar.subElements.get("MidHealth")[1],
-                                verticle ? healthBar.texturePosX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                                verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);*/
+                        drawBar(healthBar, currentValue, "MidHealth");
                     } else {
-                        drawTexturedModalRect(healthBar.uiPosX, healthBar.uiPosY, healthBar.subElements.get("LowHealth")[0], healthBar.subElements.get("LowHealth")[1],
-                                verticle ? healthBar.texturePosX : Math.min(Math.round(currentValue * healthBar.textureSizeX), healthBar.textureSizeX),
-                                verticle ? Math.min(Math.round(currentValue * healthBar.textureSizeY), healthBar.textureSizeY): healthBar.textureSizeY);
+                        drawBar(healthBar, currentValue, "LowHealth");
                     }
                 }
 
                 healthLast = health;
 
-
-                if (WidgetImages.keySet().contains("FoodBar")) {
-                    mc.getTextureManager().bindTexture(WidgetImages.get("FoodBar"));
-                } else {
-                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
-                }
-                drawTexturedModalRect(foodBarBackground.uiPosX, foodBarBackground.uiPosY, foodBarBackground.texturePosX, foodBarBackground.texturePosY, foodBarBackground.textureSizeX, foodBarBackground.textureSizeY); //Food Bar
+                /*
+                *
+                *  GET FOODBAR RESOURCE IF EXISTS
+                *
+                * */
                 if (WidgetImages.keySet().contains("FoodBarBackground")) {
                     mc.getTextureManager().bindTexture(WidgetImages.get("FoodBarBackground"));
                 } else {
-                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
+                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar : uiHealthBar);
                 }
-                drawTexturedModalRect(foodBar.uiPosX, foodBar.uiPosY, 0, 99, foodBar.verticle ? foodBar.textureSizeX : Math.min((Math.round(foodVal / 20f * satBar.textureSizeX)), foodBar.textureSizeX), foodBar.verticle ? Math.min((Math.round(foodVal / 20f * foodBar.textureSizeY)), foodBar.textureSizeY) : foodBar.textureSizeY);
-                if (WidgetImages.keySet().contains("SaturationBarBackground")) {
-                    mc.getTextureManager().bindTexture(WidgetImages.get("SaturationBarBackground"));
-                } else {
-                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
-                }
-                drawTexturedModalRect(satBarBackground.uiPosX, satBarBackground.uiPosY, satBarBackground.texturePosX, satBarBackground.texturePosY, satBarBackground.verticle ? satBarBackground.textureSizeX : Math.min((Math.round(saturationVal / 20f * satBarBackground.textureSizeX)), satBarBackground.textureSizeX), satBarBackground.verticle ? Math.min((Math.round(saturationVal / 20f * satBarBackground.textureSizeY)), satBarBackground.textureSizeY) : satBarBackground.textureSizeY);
 
-                if (WidgetImages.keySet().contains("SaturationBar")) {
-                    mc.getTextureManager().bindTexture(WidgetImages.get("SaturationBar"));
-                } else {
-                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
-                }
-                if (showSaturation)
-                    drawTexturedModalRect(satBar.uiPosX, satBar.uiPosY, satBar.texturePosX, satBar.texturePosY, satBar.verticle ? satBar.textureSizeX : Math.min((Math.round(saturationVal / 20f * satBar.textureSizeX)), satBar.textureSizeX), satBar.verticle ? Math.min((Math.round(saturationVal / 20f * satBar.textureSizeY)), satBar.textureSizeY) : satBar.textureSizeY);
 
-                if (mc.thePlayer.getTotalArmorValue() > 0) {
+                /*
+                *
+                *  DRAW FOODBAR BACKGROUND
+                *
+                * */
+                drawBar(foodBarBackground, 1);
+
+                /*
+                *
+                *  GET FOODBAR RESOURCE IF EXISTS
+                *
+                * */
+                if (WidgetImages.keySet().contains("FoodBar")) {
+                    mc.getTextureManager().bindTexture(WidgetImages.get("FoodBar"));
+                } else {
+                    mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar : uiHealthBar);
+                }
+
+
+                /*
+                *
+                *  DRAW FOODBAR
+                *
+                * */
+                drawBar(foodBar, foodVal / 20f);
+
+                if (satBar.alwaysShow) {
+                    /*
+                    *
+                    *  GET SATURATIONBAR BACKGROUND RESOURCE IF EXISTS
+                    *
+                    * */
+                    if (WidgetImages.keySet().contains("SaturationBarBackground")) {
+                        mc.getTextureManager().bindTexture(WidgetImages.get("SaturationBarBackground"));
+                    } else {
+                        mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar : uiHealthBar);
+                    }
+
+
+                    /*
+                    *
+                    *  DRAW SATURATION BAR BACKGROUND
+                    *
+                    * */
+                    drawBar(satBarBackground, 1);
+
+
+                    /*
+                    *
+                    *  GET SATURATIONBAR RESOURCE IF EXISTS
+                    *
+                    * */
+                    if (WidgetImages.keySet().contains("SaturationBar")) {
+                        mc.getTextureManager().bindTexture(WidgetImages.get("SaturationBar"));
+                    } else {
+                        mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar : uiHealthBar);
+                    }
+
+                    drawBar(satBar, saturationVal / 20f);
+                }
+
+
+                /*
+                *
+                *  SHOW ARMOR BAR
+                *
+                * */
+                if (mc.thePlayer.getTotalArmorValue() > 0 || armorBar.alwaysShow) {
+                    /*
+                    *
+                    *  GET ARMOR BAR BACKGROUND RESOURCE IF EXISTS
+                    *
+                    * */
                     if (WidgetImages.keySet().contains("ArmorBarBackground")) {
                         mc.getTextureManager().bindTexture(WidgetImages.get("ArmorBarBackground"));
                     } else {
                         mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
                     }
-                    drawTexturedModalRect(armorBarBackground.uiPosX, armorBarBackground.uiPosY, armorBarBackground.texturePosX, armorBarBackground.texturePosY, armorBarBackground.textureSizeX, armorBarBackground.textureSizeY);
 
+                    /*
+                    *
+                    *  DRAW ARMOR BAR
+                    *
+                    * */
+                    drawBar(armorBarBackground, 1);
+
+                    /*
+                    *
+                    *  GET ARMOR BAR RESOURCE IF EXISTS
+                    *
+                    * */
                     if (WidgetImages.keySet().contains("ArmorBar")) {
                         mc.getTextureManager().bindTexture(WidgetImages.get("ArmorBar"));
                     } else {
                         mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
                     }
-                    drawTexturedModalRect(armorBar.uiPosX, armorBar.uiPosY, armorBar.texturePosX, armorBar.texturePosY, Math.min((Math.round((float) mc.thePlayer.getTotalArmorValue() / (float) Configuration.maxArmor * xSize)), xSize), ySize);
+
+                    /*
+                    *
+                    *  DRAW ARMOR BAR
+                    *
+                    * */
+                    drawBar(armorBar, 1);
                 }
 
+                /*
+                *
+                *  IF MOUNTED
+                *
+                * */
                 if (mc.thePlayer.isRidingHorse() && mc.thePlayer.ridingEntity instanceof EntityLiving) {
+                    /*
+                    *
+                    *  GET MOUNT HEALTH BACKGROUND RESOURCE IF EXISTS
+                    *
+                    * */
                     if (WidgetImages.keySet().contains("HorseHealthBarBackground")) {
                         mc.getTextureManager().bindTexture(WidgetImages.get("HorseHealthBarBackground"));
                     } else {
                         mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
                     }
-                    drawTexturedModalRect(horseHealthBarBackground.uiPosX, horseHealthBarBackground.uiPosY, horseHealthBarBackground.texturePosX, horseHealthBarBackground.texturePosY, horseHealthBarBackground.textureSizeX, horseHealthBarBackground.textureSizeY);
+
+                    /*
+                    *
+                    *  DRAW MOUNT HEALTH BACKGROUND
+                    *
+                    * */
+                    drawBar(horseHealthBarBackground, 1);
+
+                    /*
+                    *
+                    *  GET MOUNT HEALTH RESOURCE IF EXISTS
+                    *
+                    * */
                     if (WidgetImages.keySet().contains("HorseHealthBar")) {
                         mc.getTextureManager().bindTexture(WidgetImages.get("HorseHealthBar"));
                     } else {
                         mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
                     }
-                    drawTexturedModalRect(horseHealthBar.uiPosX, horseHealthBar.uiPosY, horseHealthBar.subElements.get("PastHealth")[0], horseHealthBar.subElements.get("PastHealth")[1], Math.min((int) (mountHealthLast2 / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth() * horseHealthBar.textureSizeX), horseHealthBar.textureSizeX), horseHealthBar.textureSizeY);
+
+                    /*
+                    *
+                    *  DRAW MOUNT HEALTH
+                    *
+                    * */
+                    drawBar(horseHealthBar, mountHealthLast2 / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth(), "PastHealth");
                     if (((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth() > .75f) {
-                        drawTexturedModalRect(horseHealthBar.uiPosX, horseHealthBar.uiPosY, horseHealthBar.texturePosX, horseHealthBar.texturePosY, Math.min((int) (((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth() * horseHealthBar.textureSizeX), horseHealthBar.textureSizeX), horseHealthBar.textureSizeY);
+                        drawBar(horseHealthBar, ((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth());
                     } else if (((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth() > .25f) {
-                        drawTexturedModalRect(horseHealthBar.uiPosX, horseHealthBar.uiPosY, horseHealthBar.subElements.get("MidHealth")[0], horseHealthBar.subElements.get("MidHealth")[1], Math.min((int) (((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth() * horseHealthBar.textureSizeX), horseHealthBar.textureSizeX), horseHealthBar.textureSizeY);
+                        drawBar(horseHealthBar, ((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth(), "MidHealth");
                     } else {
-                        drawTexturedModalRect(horseHealthBar.uiPosX, horseHealthBar.uiPosY, horseHealthBar.subElements.get("LowHealth")[0], horseHealthBar.subElements.get("LowHealth")[1], Math.min((int) (((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth() * horseHealthBar.textureSizeX), horseHealthBar.textureSizeX), horseHealthBar.textureSizeY);
+                        drawBar(horseHealthBar, ((EntityLiving) mc.thePlayer.ridingEntity).getHealth() / ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth(), "LowHealth");
                     }
                     mountHealthLast = ((EntityLiving)mc.thePlayer.ridingEntity).getHealth();
                 }
 
                 if (mc.thePlayer.isRidingHorse() && mc.thePlayer.ridingEntity instanceof EntityLiving && ((EntityLivingBase) mc.thePlayer.ridingEntity).getTotalArmorValue() > 0) {
+                    /*
+                    *
+                    *  GET MOUNT ARMOR BACKGROUND RESOURCE IF EXISTS
+                    *
+                    * */
                     if (WidgetImages.keySet().contains("HorseArmorBarBackground")) {
                         mc.getTextureManager().bindTexture(WidgetImages.get("HorseArmorBarBackground"));
                     } else {
                         mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
                     }
-                    drawTexturedModalRect(horseArmorBarBackground.uiPosX, horseArmorBarBackground.uiPosY, horseArmorBarBackground.texturePosX, horseArmorBarBackground.texturePosY, horseArmorBarBackground.textureSizeX, horseArmorBarBackground.textureSizeY);
+
+                    /*
+                    *
+                    *  DRAW MOUNT ARMOR BACKGROUND
+                    *
+                    * */
+                    drawBar(horseArmorBarBackground, 1);
+
+                    /*
+                    *
+                    *  GET MOUNT ARMOR RESOURCE IF EXISTS
+                    *
+                    * */
                     if (WidgetImages.keySet().contains("HorseArmorBar")) {
                         mc.getTextureManager().bindTexture(WidgetImages.get("HorseArmorBar"));
                     } else {
                         mc.getTextureManager().bindTexture(useDrZedsPersonalTexture ? uiZedsHealthBar: uiHealthBar);
                     }
-                    drawTexturedModalRect(horseArmorBar.uiPosX, horseArmorBar.uiPosY, horseArmorBar.texturePosX, horseArmorBar.texturePosY, Math.min((Math.round((float) ((EntityLivingBase) mc.thePlayer.ridingEntity).getTotalArmorValue() / (float) Configuration.maxArmor * horseArmorBar.textureSizeX)), horseArmorBar.textureSizeX), horseArmorBar.textureSizeY);
+
+                    /*
+                    *
+                    *  DRAW MOUNT ARMOR
+                    *
+                    * */
+                    drawBar(horseArmorBar, ((EntityLiving) mc.thePlayer.ridingEntity).getTotalArmorValue() / maxArmor);
                 }
 
+                /*
+                *
+                *  DRAW STRINGS IF ENABLED
+                *
+                * */
                 if (Configuration.showValues) {
+//                    GL11.glScalef(healthBar.fontSize, healthBar.fontSize, healthBar.fontSize);
                     if (healthBar.showValue)
                         mc.fontRenderer.drawString((health + absorb) + "/" + healthMax, healthBar.textX + (healthBar.centered ? (mc.fontRenderer.getStringWidth(health + "/" + healthMax) / 2) : 0), healthBar.textY, Integer.parseInt(healthBar.color.replace("0x", ""), 16), false);
+//                    GL11.glScalef(foodBar.fontSize, foodBar.fontSize, foodBar.fontSize);
                     if (foodBar.showValue)
                         mc.fontRenderer.drawString(foodVal + "/" + 20, foodBar.textX - (foodBar.centered ? (mc.fontRenderer.getStringWidth(foodVal + "/" + 20) / 2) : 0), foodBar.textY, Integer.parseInt(foodBar.color.replace("0x", ""), 16), false);
-                    if (armorBar.showValue)
+//                    GL11.glScalef(armorBar.fontSize, armorBar.fontSize, armorBar.fontSize);
+                    if (armorBar.showValue && (mc.thePlayer.getTotalArmorValue() > 0 || armorBar.alwaysShow))
                         mc.fontRenderer.drawString(mc.thePlayer.getTotalArmorValue() + "/" + Configuration.maxArmor, armorBar.textX + (armorBar.centered ? (mc.fontRenderer.getStringWidth(mc.thePlayer.getTotalArmorValue() + "/" + Configuration.maxArmor) / 2) : 0), armorBar.textY, Integer.parseInt(armorBar.color.replace("0x", ""), 16), false);
+//                    GL11.glScalef(horseHealthBar.fontSize, horseHealthBar.fontSize, horseHealthBar.fontSize);
                     if (mc.thePlayer.isRidingHorse() && horseHealthBar.showValue)
                         mc.fontRenderer.drawString(((EntityLivingBase) mc.thePlayer.ridingEntity).getHealth() + "/" + ((EntityLivingBase) mc.thePlayer.ridingEntity).getMaxHealth(), horseHealthBar.textX + (horseHealthBar.centered ? (mc.fontRenderer.getStringWidth(((EntityLivingBase) mc.thePlayer.ridingEntity).getHealth() + "/" + ((EntityLivingBase) mc.thePlayer.ridingEntity).getMaxHealth()) / 2) : 0), horseHealthBar.textY, Integer.parseInt(horseHealthBar.color.replace("0x", ""), 16), false);
+//                    GL11.glScalef(horseArmorBar.fontSize, horseArmorBar.fontSize, horseArmorBar.fontSize);
                     if (mc.thePlayer.isRidingHorse() && horseArmorBar.showValue)
                         mc.fontRenderer.drawString(((EntityLivingBase) mc.thePlayer.ridingEntity).getTotalArmorValue() + "/" + Configuration.maxArmor, horseArmorBar.textX + (horseArmorBar.centered ? (mc.fontRenderer.getStringWidth(((EntityLivingBase) mc.thePlayer.ridingEntity).getTotalArmorValue() + "/" + Configuration.maxArmor) / 2) : 0), horseArmorBar.textY, Integer.parseInt(horseArmorBar.color.replace("0x", ""), 16), false);
                 }
+//                float scale = (float) mc.displayWidth / (float) scaledWidth;
+//                GL11.glScalef(scale, scale, scale);
             } else {
                 if (highlight && Configuration.highlightOnDamage) {
                     drawTexturedModalRect(xBasePos, yBasePos, 0, 11, xSize, ySize);
@@ -289,10 +454,10 @@ public class RenderHPEvent {
                 drawTexturedModalRect(xBasePos + xSize + xSpacer, yBasePos, 0, 0, xSize, ySize); //Food Bar
 
                 drawTexturedModalRect(xBasePos + xSize + xSpacer, yBasePos, 0, 99, Math.min((Math.round(foodVal / 20f * xSize)), xSize), ySize);
-                if (showSaturation)
+                if (satBar.alwaysShow)
                     drawTexturedModalRect(xBasePos + xSize + xSpacer, yBasePos, 0, 110, Math.min((Math.round(saturationVal / 20f * xSize)), xSize), ySize);
 
-                if (mc.thePlayer.getTotalArmorValue() > 0 || alwaysShowArmorBar) {
+                if (mc.thePlayer.getTotalArmorValue() > 0 || armorBar.alwaysShow) {
                     drawTexturedModalRect(xBasePos, yBasePos - 12, 0, 0, xSize, ySize);
                     drawTexturedModalRect(xBasePos, yBasePos - 12, 0, 121, Math.min((Math.round((float) mc.thePlayer.getTotalArmorValue() / (float) Configuration.maxArmor * xSize)), xSize), ySize);
                 }
@@ -319,7 +484,7 @@ public class RenderHPEvent {
                         mc.fontRenderer.drawString((health + absorb) + "/" + healthMax, xBasePos + 40 - (mc.fontRenderer.getStringWidth(health + "/" + healthMax) / 2), yBasePos + 1, Integer.parseInt(healthBar.color.replace("0x", ""), 16), false);
                     if (foodBar.showValue)
                         mc.fontRenderer.drawString(foodVal + "/" + 20, xBasePos + xSize + 50 - (mc.fontRenderer.getStringWidth(foodVal + "/" + 20) / 2), yBasePos + 1, Integer.parseInt(foodBar.color.replace("0x", ""), 16), false);
-                    if (armorBar.showValue && (mc.thePlayer.getTotalArmorValue() > 0 || alwaysShowArmorBar))
+                    if (armorBar.showValue && (mc.thePlayer.getTotalArmorValue() > 0 || armorBar.alwaysShow))
                         mc.fontRenderer.drawString(mc.thePlayer.getTotalArmorValue() + "/" + Configuration.maxArmor, xBasePos + 40 - (mc.fontRenderer.getStringWidth(mc.thePlayer.getTotalArmorValue() + "/" + Configuration.maxArmor) / 2), yBasePos - 11, Integer.parseInt(armorBar.color.replace("0x", ""), 16), false);
                     if (mc.thePlayer.isRidingHorse() && horseHealthBar.showValue)
                         mc.fontRenderer.drawString(((EntityLiving) mc.thePlayer.ridingEntity).getHealth() + "/" + ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth(), xBasePos + xSize + 50 - (mc.fontRenderer.getStringWidth(((EntityLiving) mc.thePlayer.ridingEntity).getHealth() + "/" + ((EntityLiving) mc.thePlayer.ridingEntity).getMaxHealth()) / 2), yBasePos - 11, Integer.parseInt(horseHealthBar.color.replace("0x", ""), 16), false);
@@ -330,6 +495,21 @@ public class RenderHPEvent {
 
             event.setCanceled(true);
         }
+    }
+    private void drawBar(Configuration.hudWidget bar, float currentPercent) {
+        drawTexturedModalRect(bar.uiPosX,
+                bar.verticle ? ((bar.uiPosY + bar.textureSizeY) - (Math.round(currentPercent * bar.textureSizeY))) : bar.uiPosY, bar.texturePosX,
+                bar.verticle ? ((bar.texturePosY + bar.textureSizeY) - (Math.round(currentPercent * bar.textureSizeY))) :  bar.texturePosY,
+                bar.verticle ? bar.textureSizeX : Math.min(Math.round(currentPercent * bar.textureSizeX), bar.textureSizeX),
+                bar.verticle ? Math.min(Math.round(currentPercent * bar.textureSizeY), bar.textureSizeY): bar.textureSizeY);
+    }
+
+    private void drawBar(Configuration.hudWidget bar, float currentPercent, String subElement) {
+        drawTexturedModalRect(bar.uiPosX,
+                bar.verticle ? ((bar.uiPosY + bar.textureSizeY) - (Math.round(currentPercent * bar.textureSizeY))) : bar.uiPosY, bar.subElements.get(subElement).get(0),
+                bar.verticle ? ((bar.subElements.get(subElement).get(1) + bar.textureSizeY) - (Math.round(currentPercent * bar.textureSizeY))) :  bar.subElements.get(subElement).get(1),
+                bar.verticle ? bar.textureSizeX : Math.min(Math.round(currentPercent * bar.textureSizeX), bar.textureSizeX),
+                bar.verticle ? Math.min(Math.round(currentPercent * bar.textureSizeY), bar.textureSizeY): bar.textureSizeY);
     }
 
     private void drawTexturedModalRect(int x, int y, int u, int v, int xSize, int ySize) {
