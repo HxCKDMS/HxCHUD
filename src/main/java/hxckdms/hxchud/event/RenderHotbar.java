@@ -55,7 +55,7 @@ public class RenderHotbar {
             if (bar.uiPosX == -9999 && bar.uiPosY == -9999) {
                 int[] shiftedPos = new int[]{0,0};
                 if (bar.hideWhenUnchanged)
-                    shiftedPos = getCalculatedHiddenPos(bar, lastItemSlot != player.inventory.currentItem || lastItem != player.getHeldItemMainhand().getItem());
+                    shiftedPos = getCalculatedHiddenPos(bar, (lastItem == null && player.getHeldItemMainhand() != null) || (lastItem != null && player.getHeldItemMainhand() == null) || (lastItemSlot != player.inventory.currentItem || lastItem != player.getHeldItemMainhand().getItem()));
                 mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/widgets.png"));
                 drawTexturedModalRect(scaledWidth - 91 + shiftedPos[0], scaledHeight - 22 + shiftedPos[1], 0, 0, 182, 22);
                 drawTexturedModalRect(scaledWidth - 91 - 1 + player.inventory.currentItem * 20 + shiftedPos[0], scaledHeight - 22 - 1 + shiftedPos[1], 0, 22, 24, 22);
@@ -72,7 +72,7 @@ public class RenderHotbar {
             } else {
                 int[] shiftedPos = new int[]{0,0};
                 if (bar.hideWhenUnchanged)
-                    shiftedPos = getCalculatedHiddenPos(bar, lastItemSlot != player.inventory.currentItem || lastItem != player.getHeldItemMainhand().getItem());
+                    shiftedPos = getCalculatedHiddenPos(bar, (lastItem == null && player.getHeldItemMainhand() != null) || (lastItem != null && player.getHeldItemMainhand() == null) || (lastItemSlot != player.inventory.currentItem || lastItem != player.getHeldItemMainhand().getItem()));
                 int startX = scaledWidth - 91, startY = scaledHeight - 22;
                 if (bar.subElements.get("Slot1Pos").get(0) < -1) {
                     if (!bar.verticle) {
