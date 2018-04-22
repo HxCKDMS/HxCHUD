@@ -11,17 +11,16 @@ public class Configuration {
     @Config.comment("Debug Mode Enable? Can cause lag and console spam!")
     public static boolean debugMode;
 
-    public static boolean showValues = true, showPreviousHealth = true, highlightOnDamage = true, showOnlyLastHit;
+    public static boolean showValues = true, showPreviousHealth = true, highlightOnDamage = true, showOnlyLastHit, customHotbarPosOnly, showAttackIndicator;
 
     public static int previousHealthDecayTimer = 500, maxArmor = 20;
 
     @Config.category("Custom Resources")
-    public static int textureGap = 1;
-    @Config.category("Custom Resources")
-    public static boolean useCustomPosition, useDrZedsPersonalTexture;
+    public static boolean useCustomPosition, useDrZedsPersonalTexture, useModHotbarTexture = true;
 
     @Config.category("Custom Resources")
-    public static String customResourceLocation = Constants.MOD_ID + ":textures/gui/healthBar.png";
+    public static String customResourceLocation = Constants.MOD_ID + ":textures/gui/healthbar.png",
+                        customHotbarTexture = Constants.MOD_ID + ":textures/gui/hotbar.png";
 
     @Config.category("UIElements")
     public static HashMap<String, hudWidget> widgets = new HashMap<>();
@@ -85,14 +84,93 @@ public class Configuration {
 
         widgets.putIfAbsent("HorseArmorBarBackground", new hudWidget("HorseArmorBarBackground", 4, 64, 0, 0, 88, 10, 29, 65, false));
         widgets.putIfAbsent("HorseArmorBar", new hudWidget("HorseArmorBar", 4, 64, 0, 176, 88, 10, 29, 65, false));
+
+        widgets.putIfAbsent("HotbarSelectedSlot", new hudWidget("HotbarSelectedSlot", 149, 245, 0, 22, 23, 23, -9999, -9999));
+        widgets.putIfAbsent("Hotbar", new hudWidget("Hotbar", 149, 245, 0, 0, 20, 21, -9999, -9999));
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot1Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot2Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot3Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot4Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot5Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot6Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot7Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot8Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(0);
+        ints.add(0);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot9Icon", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot1Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot2Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot3Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot4Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot5Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot6Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot7Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot8Pos", ints);
+        ints = new LinkedList<>();
+        ints.add(-100);
+        ints.add(-100);
+        widgets.get("Hotbar").subElements.putIfAbsent("Slot9Pos", ints);
+        widgets.putIfAbsent("Offhand", new hudWidget("Offhand", 345, 245, 0, 0, 20, 21, -9999, -9999));
+        widgets.putIfAbsent("ExpBar", new hudWidget("ExpBar", 149, 240, 0, 64, 182, 5, 240, 230));
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
     public static class hudWidget {
         public String elementName = "health", color = "0xffffff", imagePath = "";
-        public int uiPosX, uiPosY, texturePosX, texturePosY, textureSizeX, textureSizeY, textX, textY;
+        public int uiPosX, uiPosY, texturePosX, texturePosY, textureSizeX, textureSizeY, textX, textY,
+                    transitionHidingPixels = 1, msHidingSpeed = 50, transitionTime = 240;
         public float fontSize = 0.75f, uiScaleX = 1, uiScaleY = 1;
-        public boolean centered = true, verticle = false, showValue = false, alwaysShow = true;
+        public boolean centered = true, verticle = false, showValue = false, alwaysShow = true,
+                hideWhenUnchanged, suddenTransition;
         public HashMap<String, LinkedList<Integer>> subElements = new HashMap<>();
         public hudWidget() {}
 
