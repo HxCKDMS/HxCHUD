@@ -3,7 +3,7 @@
   "modid": "hxchud",
   "name": "HxC HUD",
   "description": "Replaces Hud.",
-  "version": "0.0.2",
+  "version": "@VERSION@",
   "mcversion": "1.12.2",
   "url": "",
   "updateUrl": "",

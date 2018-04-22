@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-version = "1.12.2-0.0.2"
+version = "1.12.2-0.0.3"
 group= "hxckdms.hxchud"
 archivesBaseName = "hxchud"
 
@@ -30,10 +30,12 @@ minecraft {
     runDir = "run"
     replaceIn "Constants.java"
     replace "@VERSION@", project.version
+    replaceIn "mcmod.info"
+    replace "@VERSION@", project.version
 }
 
 dependencies {
-    runtime files('ConfigurationAPI-1.3.jar')
+    runtime files('ConfigurationAPI-1.4.jar')
 }
 
 processResources
